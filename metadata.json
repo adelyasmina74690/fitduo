@@ -1,0 +1,6 @@
+{
+  "name": "FitDuo - Fitness & Musculation Maison",
+  "description": "Application PWA de fitness au poids du corps pour solo ou couple, 5 à 10 min par jour, 100% hors-ligne, optimisée mobile et Android TV.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

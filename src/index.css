@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@layer base {
+  * {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    overflow-x: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+}
+
+/* High-visibility TV D-pad focus styling (4px green ring + 1.05 scale) */
+:focus-visible,
+.tv-focus-target:focus-visible,
+[data-focused="true"] {
+  outline: none !important;
+  box-shadow: 0 0 0 4px #22c55e, 0 0 30px rgba(34, 197, 94, 0.75) !important;
+  transform: scale(1.05) !important;
+  z-index: 30 !important;
+  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out !important;
+}
+
+/* Glowing text effects */
+.glow-emerald {
+  text-shadow: 0 0 16px rgba(34, 197, 94, 0.5);
+}
+
+.glow-cyan {
+  text-shadow: 0 0 16px rgba(6, 182, 212, 0.5);
+}
+
+/* Custom sleek scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #090d16;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}

@@ -1,0 +1,26 @@
+{
+  "id": "/",
+  "name": "FitDuo - Fitness & Musculation Maison",
+  "short_name": "FitDuo",
+  "description": "Fitness et musculation à la maison pour solo ou couple, 5 à 10 min par jour, 100% hors-ligne.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#090D16",
+  "theme_color": "#22C55E",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
