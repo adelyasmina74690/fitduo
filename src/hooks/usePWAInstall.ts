@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { isNativeApp } from '../lib/native';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -54,8 +55,8 @@ export function usePWAInstall() {
   };
 
   return {
-    isInstallable: !!deferredPrompt,
-    isInstalled,
+    isInstallable: !isNativeApp() && !!deferredPrompt,
+    isInstalled: isNativeApp() || isInstalled,
     isIOS,
     install,
   };

@@ -1,0 +1,68 @@
+name: Build APK Android (téléphone + TV)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-apk
+  cancel-in-progress: true
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+
+      - name: SDK Android
+        uses: android-actions/setup-android@v3
+
+      - name: Installer les dépendances
+        run: npm install --no-audit --no-fund
+
+      - name: Build web + synchronisation Capacitor
+        run: npm run android:sync
+
+      - name: Compiler l'APK signé
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease --no-daemon --stacktrace
+
+      - name: Renommer l'APK
+        run: cp android/app/build/outputs/apk/release/app-release.apk FitDuo.apk
+
+      - name: Artefact de build
+        uses: actions/upload-artifact@v4
+        with:
+          name: FitDuo-apk
+          path: FitDuo.apk
+
+      - name: Publier la release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: FitDuo 1.0.${{ github.run_number }}
+          body: |
+            APK FitDuo pour téléphone Android et décodeur Android TV.
+            Lien direct permanent : https://github.com/${{ github.repository }}/releases/latest/download/FitDuo.apk
+          files: FitDuo.apk
+          make_latest: true

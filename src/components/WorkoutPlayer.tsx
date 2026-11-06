@@ -20,6 +20,7 @@ import { LEVEL_CONFIGS } from '../data/program';
 import { useSpatialNavigation } from '../hooks/useSpatialNavigation';
 import { soundEngine } from '../lib/audio';
 import { speechCoach } from '../lib/speech';
+import { allowScreenSleep, keepScreenOn } from '../lib/native';
 import {
   AppSettings,
   ExerciseDefinition,
@@ -115,6 +116,7 @@ export const WorkoutPlayer: React.FC<WorkoutPlayerProps> = ({
       }
     }
     requestWakeLock();
+    keepScreenOn();
 
     // Auto-pause if app goes into background, and re-acquire wake lock on resume
     const handleVisibilityChange = () => {
@@ -129,6 +131,7 @@ export const WorkoutPlayer: React.FC<WorkoutPlayerProps> = ({
 
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      allowScreenSleep();
       if (wakeLockRef.current) {
         wakeLockRef.current.release().catch(() => {});
         wakeLockRef.current = null;

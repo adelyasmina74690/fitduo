@@ -22,6 +22,7 @@ import {
 import { useSpatialNavigation } from '../hooks/useSpatialNavigation';
 import { deleteProfile2, exportAllData, importAllData, resetAllData, simulateWeekCompleted } from '../lib/storage';
 import { AppSettings, MusicVibe, UserProfile } from '../types';
+import { openExternalUrl } from '../lib/native';
 
 interface SettingsModalProps {
   settings: AppSettings;
@@ -91,7 +92,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     const url = externalUrl.trim();
     if (url) {
       onUpdateSettings({ ...settings, externalMusicUrl: url });
-      window.open(url, '_blank');
+      openExternalUrl(url);
     }
   };
 
