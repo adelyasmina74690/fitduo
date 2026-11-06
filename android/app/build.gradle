@@ -18,12 +18,13 @@ android {
         }
     }
     signingConfigs {
-        // Clé de signature fixe : indispensable pour mettre à jour l'app sans la désinstaller
+        // Clé de signature fixe (fournie par les secrets GitHub en CI, jamais versionnée) :
+        // indispensable pour mettre à jour l'app sans la désinstaller
         fitduo {
             storeFile file("../keystore/fitduo-release.jks")
-            storePassword System.getenv("FITDUO_KEYSTORE_PASSWORD") ?: "fitduo-local-key"
+            storePassword System.getenv("FITDUO_KEYSTORE_PASSWORD")
             keyAlias "fitduo"
-            keyPassword System.getenv("FITDUO_KEYSTORE_PASSWORD") ?: "fitduo-local-key"
+            keyPassword System.getenv("FITDUO_KEYSTORE_PASSWORD")
         }
     }
     buildTypes {

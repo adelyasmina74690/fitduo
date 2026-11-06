@@ -45,8 +45,21 @@ jobs:
       - name: Build web + synchronisation Capacitor
         run: npm run android:sync
 
+      - name: Clé de signature (secrets GitHub)
+        env:
+          FITDUO_KEYSTORE_B64: ${{ secrets.FITDUO_KEYSTORE_B64 }}
+        run: |
+          if [ -z "$FITDUO_KEYSTORE_B64" ]; then
+            echo "::error::Secret FITDUO_KEYSTORE_B64 manquant (Settings > Secrets and variables > Actions)"
+            exit 1
+          fi
+          mkdir -p android/keystore
+          echo "$FITDUO_KEYSTORE_B64" | base64 -d > android/keystore/fitduo-release.jks
+
       - name: Compiler l'APK signé
         working-directory: android
+        env:
+          FITDUO_KEYSTORE_PASSWORD: ${{ secrets.FITDUO_KEYSTORE_PASSWORD }}
         run: |
           chmod +x gradlew
           ./gradlew assembleRelease --no-daemon --stacktrace
