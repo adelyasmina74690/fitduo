@@ -4,6 +4,7 @@ import App from './App.tsx';
 import './index.css';
 import {initNativeShell} from './lib/native';
 
-initNativeShell();
-
-createRoot(document.getElementById('root')!).render(<App />);
+// La détection TV se fait avant le premier rendu pour éviter un saut de mise en page
+initNativeShell().finally(() => {
+  createRoot(document.getElementById('root')!).render(<App />);
+});

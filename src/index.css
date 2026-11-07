@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* Le décodeur Android TV fait 960 points de large : on y déclenche la mise en page large (lg) */
+@theme {
+  --breakpoint-lg: 56rem;
+}
+
 @layer base {
   * {
     font-family: 'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif;
@@ -47,4 +52,42 @@
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #334155;
+}
+
+/* =====================================================================
+   MODE TV (décodeur Android TV) — activé par la classe html.tv-mode
+   Le décodeur affiche l'app dans une fenêtre de 960x540 points (densité x2) :
+   toute l'interface est en rem, on cale donc la taille de base sur la
+   hauteur de l'écran pour que chaque écran tienne sans défilement,
+   quelle que soit la résolution du téléviseur.
+   ===================================================================== */
+html.tv-mode {
+  font-size: clamp(11px, calc(100vh / 45), 26px); /* 12px pour 540 de haut */
+}
+
+/* Effets coûteux pour le GPU d'un décodeur : supprimés en mode TV */
+html.tv-mode *,
+html.tv-mode *::before,
+html.tv-mode *::after {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  text-shadow: none !important;
+  animation-duration: 0.01ms !important;
+}
+html.tv-mode .blur-3xl,
+html.tv-mode .blur-2xl,
+html.tv-mode .blur-xl {
+  display: none !important;
+}
+/* Ombres portées lourdes remplacées par un simple contour */
+html.tv-mode [class*="shadow-"]:not(:focus-visible) {
+  box-shadow: none !important;
+}
+/* Focus télécommande : anneau net, sans halo flou ni animation de taille */
+html.tv-mode :focus-visible,
+html.tv-mode .tv-focus-target:focus-visible,
+html.tv-mode [data-focused="true"] {
+  box-shadow: 0 0 0 3px #22c55e, 0 0 0 6px rgba(34, 197, 94, 0.35) !important;
+  transform: none !important;
+  transition: none !important;
 }

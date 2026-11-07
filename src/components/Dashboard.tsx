@@ -212,7 +212,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
       {/* HERO SECTION: TODAY'S WORKOUT CALL TO ACTION */}
       <div className="bg-gradient-to-br from-slate-900 via-slate-900/90 to-slate-950 border border-slate-800 rounded-3xl p-6 sm:p-8 relative overflow-hidden shadow-2xl mb-8">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
           <div className="space-y-3 max-w-xl">

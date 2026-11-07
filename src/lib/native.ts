@@ -7,7 +7,7 @@
  *  - touche Retour de la télécommande / du téléphone : App.backButton
  *  - liens de playlist : AppLauncher (ouvre Spotify / Deezer / YouTube Music)
  */
-import { Capacitor } from '@capacitor/core';
+import { Capacitor, registerPlugin } from '@capacitor/core';
 import { App } from '@capacitor/app';
 import { AppLauncher } from '@capacitor/app-launcher';
 import { KeepAwake } from '@capacitor-community/keep-awake';
@@ -95,10 +95,48 @@ export function initNativeBackButton(): void {
   });
 }
 
+/* ---------- Détection Android TV ---------- */
+
+interface TvInfoPlugin {
+  getInfo(): Promise<{ isTv: boolean; densityDpi: number }>;
+}
+const TvInfo = registerPlugin<TvInfoPlugin>('TvInfo');
+
+/**
+ * Vrai sur un décodeur / téléviseur Android TV (plugin natif TvInfo).
+ * Forçable pour les tests web avec `?tv=1` (et désactivable avec `?tv=0`).
+ */
+export async function detectTvMode(): Promise<boolean> {
+  try {
+    const forced = new URLSearchParams(window.location.search).get('tv');
+    if (forced === '1') return true;
+    if (forced === '0') return false;
+  } catch {
+    /* ignore */
+  }
+  if (!isNativeApp()) return false;
+  try {
+    const info = await Promise.race([
+      TvInfo.getInfo(),
+      new Promise<never>((_, reject) => setTimeout(() => reject(new Error('timeout')), 1500)),
+    ]);
+    return !!info.isTv;
+  } catch (err) {
+    console.warn('Détection TV impossible :', err);
+    return false;
+  }
+}
+
+export const isTvMode = (): boolean => document.documentElement.classList.contains('tv-mode');
+
 /* ---------- Initialisation ---------- */
 
-export function initNativeShell(): void {
-  if (!isNativeApp()) return;
-  document.documentElement.classList.add('native-app');
-  initNativeBackButton();
+export async function initNativeShell(): Promise<void> {
+  if (isNativeApp()) {
+    document.documentElement.classList.add('native-app');
+    initNativeBackButton();
+  }
+  if (await detectTvMode()) {
+    document.documentElement.classList.add('tv-mode');
+  }
 }

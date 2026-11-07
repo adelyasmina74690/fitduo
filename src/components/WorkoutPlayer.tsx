@@ -273,7 +273,7 @@ export const WorkoutPlayer: React.FC<WorkoutPlayerProps> = ({
       )}
 
       {/* 1. COMPACT TOP BAR: Progress, Step x/y & Sound Toggles */}
-      <div className="w-full max-w-6xl mx-auto flex flex-col gap-1.5 shrink-0">
+      <div className="w-full max-w-7xl mx-auto flex flex-col gap-1.5 shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <button
@@ -350,10 +350,10 @@ export const WorkoutPlayer: React.FC<WorkoutPlayerProps> = ({
         {/* MANNEQUIN CONTAINER: 60% width in Landscape, >= 40% height in Portrait */}
         <div
           className={`${
-            isLandscape ? 'w-[60%] h-full' : 'w-full h-[44%] min-h-[40%]'
+            isLandscape ? 'flex-[3] min-w-0 h-full' : 'w-full h-[44%] min-h-[40%]'
           } flex flex-col justify-center items-center min-h-0 shrink-0`}
         >
-          <div className="w-full h-full bg-slate-900/60 border border-slate-800/80 rounded-3xl p-2.5 sm:p-4 backdrop-blur-md relative flex flex-col items-center justify-between shadow-2xl overflow-hidden">
+          <div className="w-full h-full bg-slate-900 border border-slate-800/80 rounded-3xl p-2.5 sm:p-4 relative flex flex-col items-center justify-between shadow-2xl overflow-hidden">
             {/* Header pill of the exercise card */}
             <div className="w-full flex items-center justify-between shrink-0">
               <span
@@ -444,7 +444,7 @@ export const WorkoutPlayer: React.FC<WorkoutPlayerProps> = ({
         {/* RIGHT (Landscape 40%) OR BOTTOM (Portrait) INFOS + CHRONO + CONTROLS */}
         <div
           className={`${
-            isLandscape ? 'w-[40%] h-full justify-around py-2' : 'w-full flex-1 justify-between py-1'
+            isLandscape ? 'flex-[2] min-w-0 h-full justify-around py-2' : 'w-full flex-1 justify-between py-1'
           } flex flex-col items-center shrink-0 min-h-0`}
         >
           {/* In Rest Mode: Card « Exercice suivant » placed cleanly UNDER the mannequin zone */}

@@ -1,4 +1,5 @@
-import React, { useEffect, useId, useRef, useState } from 'react';
+import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { isTvMode } from '../lib/native';
 import { MannequinPoseType } from '../types';
 
 interface Joint2D {
@@ -2399,7 +2400,7 @@ interface MannequinProps {
   partnerTag?: string;
 }
 
-export const Mannequin: React.FC<MannequinProps> = ({
+const MannequinView: React.FC<MannequinProps> = ({
   poseType = 'squat',
   colorTheme = 'emerald',
   isPaused = false,
@@ -2414,20 +2415,25 @@ export const Mannequin: React.FC<MannequinProps> = ({
   const startTimeRef = useRef<number | null>(null);
 
   useEffect(() => {
+    // Décodeur TV : 25 images/s (cadence cinéma) suffisent pour une démonstration
+    const minFrameMs = isTvMode() ? 40 : 16;
+    let lastDrawn = -Infinity;
+    const f0 = mergeWithDefaultStanding(poseDef.frames[0]);
+    const f1 = mergeWithDefaultStanding(poseDef.frames[1]);
+
     const loop = (timestamp: number) => {
       if (startTimeRef.current === null) {
         startTimeRef.current = timestamp;
       }
 
-      if (!isPaused) {
+      const shouldDraw = timestamp - lastDrawn >= minFrameMs && !document.hidden;
+      if (!isPaused && shouldDraw) {
+        lastDrawn = timestamp;
         const elapsed = timestamp - startTimeRef.current;
         const dur = poseDef.durationMs || 2000;
         const progress = (elapsed % dur) / dur;
         // Smooth cosine ease: 0 -> 1 -> 0
         const easedT = 0.5 - 0.5 * Math.cos(progress * 2 * Math.PI);
-
-        const f0 = mergeWithDefaultStanding(poseDef.frames[0]);
-        const f1 = mergeWithDefaultStanding(poseDef.frames[1]);
 
         const rawJoints: Joint2D = {
           pelvis: safeLerp2D(f0.pelvis, f1.pelvis, easedT, DEFAULT_STANDING_POSE.pelvis),
@@ -2515,7 +2521,8 @@ export const Mannequin: React.FC<MannequinProps> = ({
 
   // Auto-cadrage intelligent du viewBox sur la boîte englobante de toute l'animation
   // Garantit que le mannequin remplit au moins 80 % de la hauteur de sa zone
-  const dynamicViewBox = (() => {
+  // Calculé une seule fois par exercice (et non à chaque image)
+  const dynamicViewBox = useMemo(() => {
     let minX = Infinity;
     let maxX = -Infinity;
     let minY = Infinity;
@@ -2552,7 +2559,7 @@ export const Mannequin: React.FC<MannequinProps> = ({
     const vbH = Math.max(120, Math.round(maxY - minY + padY * 2));
 
     return `${vbX} ${vbY} ${vbW} ${vbH}`;
-  })();
+  }, [poseDef]);
 
   // Calcul du centre d'appui au sol pour l'ombre
   const groundContacts = [
@@ -2584,7 +2591,7 @@ export const Mannequin: React.FC<MannequinProps> = ({
       <svg
         viewBox={dynamicViewBox}
         preserveAspectRatio="xMidYMid meet"
-        className="w-full h-full object-contain filter drop-shadow-[0_8px_24px_rgba(34,197,94,0.22)]"
+        className="w-full h-full object-contain"
       >
         <defs>
           <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="100%">
@@ -2778,3 +2785,6 @@ export const Mannequin: React.FC<MannequinProps> = ({
     </div>
   );
 };
+
+// Mémorisé : le chrono qui change chaque seconde ne redessine plus le mannequin
+export const Mannequin = React.memo(MannequinView);
